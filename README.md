@@ -67,6 +67,10 @@ Update your webhook URLs in the partner dashboard with these URLs for testing.
 
 ![A screenshot of the webhook URLs in the Payments in Outlook dashboard](readme-images/dashboard-webhooks.PNG)
 
+## Generating a test payment request message
+
+See [Get started with Payments in Outlook](https://review.docs.microsoft.com/en-us/outlook/payments/get-started?branch=pay-docs#send-the-test-payment-request) for steps to send a test message to yourself.
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
