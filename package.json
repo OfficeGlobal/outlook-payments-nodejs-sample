@@ -1,0 +1,19 @@
+{
+  "name": "mock-merchant",
+  "version": "1.0.0",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/officedev/outlook-payments-nodejs-sample"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "body-parser": "~1.18.2",
+    "express": "~4.16.1",
+    "pad-right": "^0.2.2",
+    "request-json": "^0.6.3",
+    "stripe": "^5.5.0"
+  }
+}
