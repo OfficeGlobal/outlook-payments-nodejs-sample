@@ -53,7 +53,7 @@ Forwarding                    http://68cd84ed.ngrok.io -> localhost:3333
 Forwarding                    https://68cd84ed.ngrok.io -> localhost:3333
 ```
 
-Copy the HTTPS URL from the second `Forwarding` entry. In the above output, the URL to copy is `https://5f14a16e.ngrok.io`. Using that URL as the base, let's construct two URLs: one to the payment request webhook (ngrok URL + `/api/update`), and one to the payment complete webhook (ngrok URL + `/api/complete`). For example, using the URL from the example output above:
+Copy the HTTPS URL from the second `Forwarding` entry. In the above output, the URL to copy is `https://68cd84ed.ngrok.io`. Using that URL as the base, let's construct two URLs: one to the payment request webhook (ngrok URL + `/api/update`), and one to the payment complete webhook (ngrok URL + `/api/complete`). For example, using the URL from the example output above:
 
 ```http
 https://68cd84ed.ngrok.io/api/update
