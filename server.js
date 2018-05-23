@@ -9,10 +9,6 @@ var bodyParser = require("body-parser");
 var app = express();
 var request = require("request-json");
 var pad = require('pad-right');
-var stripeApiKey = "sk_test_YOUR_API_KEY";
-var stripe = require("stripe")(stripeApiKey);
-
-var stripeAccountId = "acct_A_SAMPLE_CONNECTED_ACCOUNT_ID";
 
 // configure body parser
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -37,65 +33,6 @@ function Decode(encoded)
     var padded = pad(encoded, encoded.length + (4 - encoded.Length % 4) % 4, '='); // has to be padded to length that is multiple of 4
     var decoded = Buffer.from(padded, 'base64');
     return decoded.toString('utf8'); // todo: need to validate token
-}
-
-function ChargeStripeToken(token, amount, res, requestId)
-{
-    console.log("value:" + amount.value + " currency:" + amount.currency);
-    var charge = stripe.charges.create({
-      amount: amount.value*100,
-      currency: amount.currency,
-      source: token, // obtained with Stripe.js
-      destination: stripeAccountId
-    }).then(
-        function(result) {
-            console.log("stripe successfully charged: %j", result);
-            var complete = `{
-                "RequestId" : "` + requestId + `",
-                "Result" : "success",
-                "Details" : "Successfully paid",
-                "Entity" : {
-                    "@context": "http://schema.org",
-                    "@type": "invoice",
-                    "identifier": "test_invoice_id",
-                    "url": "https://contoso.com",
-                    "broker": {
-                        "@type": "LocalBusiness",
-                        "name": "Contoso Cleaning Services, Ltd."
-                    },
-                    "paymentDueDate": "2017-12-15",
-                    "totalPaymentDue": {
-                        "@type": "PriceSpecification",
-                        "price": 10.00,
-                        "priceCurrency": "USD"
-                    },
-                    "paymentStatus": "PaymentComplete"
-                }
-            }`;
-
-            res.json(JSON.parse(complete));
-        },
-        function(err) {
-            console.log("stripe charge failed: %j,", err);
-            var complete = `{
-                "RequestId" : "` + requestId + `",
-                "Result" : "fail",
-                "Details" : "`+ err.message +`",
-                "Target" : "stripeToken",
-                "Error" : {
-                    "code": "` + err.rawType + `",
-                    "message": "`+ err.message + `",
-                    "innerError": {
-                        "code": "` + err.code +`",
-                        "message" :"` + err.message +`"
-                    }
-                }
-            }`;
-
-            res.json(JSON.parse(complete));
-        }
-    );
-    return charge;
 }
 
 // test route to make sure everything is working (accessed at GET http://localhost:3333/api)
@@ -304,7 +241,7 @@ router.route("/complete")
                 if (status == "reject")
                 {
                     var complete = `{
-                        "RequestId" : "` + response.RequestId + `",
+                        "RequestId" : "${response.RequestId}",
                         "Result" : "fail",
                         "Details" : "invalid token"
                     }`;
@@ -313,8 +250,6 @@ router.route("/complete")
                 }
                 else
                 {
-
-
                     try
                     {
                         var token = response.details.paymentToken;
@@ -325,7 +260,84 @@ router.route("/complete")
                         var amount = header["Amount"];
                         if(format == "Stripe")
                         {
-                            ChargeStripeToken(payload, amount, res, response.RequestId);
+                            // Please refer to https://stripe.com/docs/api#create_charge to use the right API to charge the returned token.
+                            // For demo, mocking the response
+                            if(payload == "tok_chargeDeclined")
+                            {
+                                var responseData = `
+                                {
+                                    "requestId": "${response.RequestId}",
+                                    "result": "fail",
+                                    "details": "We were unable to charge your credit card.",
+                                    "Error": {
+                                        "code": "card_error",
+                                        "message": "Card cannot be processed.",
+                                        "target": "stripeToken",
+                                        "innerError": {
+                                            "code": "card_declined",
+                                            "message": "Your credit card was declined."
+                                        }
+                                    }
+                                }`;
+
+                                res.json(JSON.parse(responseData));
+                            }
+                            else if(payload == "tok_visa"
+                                    || payload == "tok_mastercard"
+                                    || payload == "tok_amex")
+                            {
+                                var responseData = `
+                                {
+                                    "requestId": "${response.RequestId}",
+                                    "result": "success",
+                                    "details": "Thank you for paying your bill!",
+                                    "entity": {
+                                        "@type": "Invoice",
+                                        "@context": "http://schema.org",
+                                        "identifier": "103032",
+                                        "url": "https://contoso.com",
+                                        "broker": {
+                                            "@type": "LocalBusiness",
+                                            "name": "Contoso Cleaning Services, Ltd."
+                                        },
+                                        "paymentDueDate": "2019-01-31T00:00:00",
+                                        "paymentStatus": "PaymentComplete",
+                                        "totalPaymentDue": {
+                                            "@type": "PriceSpecification",
+                                            "price": 0,
+                                            "priceCurrency": "USD"
+                                        },
+                                        "confirmationNumber": "98765"
+                                    }
+                                }`;
+
+                                res.json(JSON.parse(responseData));
+                            }
+                            else
+                            {
+                                // Not one of the TEST mode cards, return invalid number error
+                                var responseData = `
+                                    {
+                                        "requestId": "${response.RequestId}",
+                                        "result": "fail",
+                                        "details": "We were unable to charge your credit card.",
+                                        "Error": {
+                                            "code": "card_error",
+                                            "message": "Card cannot be processed.",
+                                            "target": "stripeToken",
+                                            "innerError": {
+                                                "code": "invalid_number",
+                                                "message": "Sample expects test tokens only."
+                                            }
+                                        }
+                                    }`;
+
+                                res.json(JSON.parse(responseData));
+                            }
+
+                        }
+                        else{
+                            res.status(400).send("Bad Request");
                         }
                     } catch (err)
                     {

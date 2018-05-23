@@ -8,13 +8,6 @@ Prior to running this sample, you must [register in the Payments in Outlook dash
 
 You must also have [Node.js](https://nodejs.org) and [NPM](https://www.npmjs.com/) installed.
 
-## Configuring the sample
-
-In [server.js](server.js), make the following changes:
-
-- Set `stripeApiKey` to your Stripe API key.
-- Set `stripeAccountId` to your Stripe account ID.
-
 ## Running the sample
 
 1. Install dependencies with the following command:
@@ -60,8 +53,7 @@ https://68cd84ed.ngrok.io/api/update
 https://68cd84ed.ngrok.io/api/complete
 ```
 
-> [!IMPORTANT]
-> Leave ngrok running so those URLs remain active.
+> **Note:**: Leave ngrok running so those URLs remain active.
 
 Update your webhook URLs in the partner dashboard with these URLs for testing.
 
