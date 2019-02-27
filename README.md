@@ -1,3 +1,14 @@
+---
+topic: sample
+products:
+- Outlook
+- Office 365
+languages:
+- Node.js
+extensions:
+  contentType: samples
+  createdDate: 04/26/2018 2:40:56 PM
+---
 # Sample Node.js Payments in Outlook webhook
 
 This is an example implementation of the payment request and payment complete webhooks for a [Payments in Outlook](https://docs.microsoft.com/outlook/payments/) service.
