@@ -1,14 +1,18 @@
 ---
 page_type: sample
 products:
+- office
 - office-365
 - office-outlook
 languages:
 - javascript
+description: "This is an example implementation of the payment request and payment complete webhooks for a Payments in Outlook service."
+urlFragment: outlook-payments-sample
 extensions:
   contentType: samples
-  createdDate: 4/24/2018 7:43:42 AM
+  createdDate: "4/24/2018 7:43:42 AM"
 ---
+
 # Sample Node.js Payments in Outlook webhook
 
 This is an example implementation of the payment request and payment complete webhooks for a [Payments in Outlook](https://docs.microsoft.com/outlook/payments/) service.
@@ -23,13 +27,13 @@ You must also have [Node.js](https://nodejs.org) and [NPM](https://www.npmjs.com
 
 1. Install dependencies with the following command:
 
-    ```Shell
+    ```bash
     npm install
     ```
 
 1. Run the sample with the following command:
 
-    ```Shell
+    ```bash
     npm start
     ```
 
@@ -39,13 +43,13 @@ When you run the sample locally, it is accessible via `http://localhost:3333`. T
 
 Open a command prompt or shell and run the following command:
 
-```Shell
+```bash
 ngrok http 3333 -host-header=localhost:3333
 ```
 
 The output should look similar to this:
 
-```Shell
+```bash
 ngrok by @inconshreveable                                     (Ctrl+C to quit)
 
 Session Status                online
@@ -59,7 +63,7 @@ Forwarding                    https://68cd84ed.ngrok.io -> localhost:3333
 
 Copy the HTTPS URL from the second `Forwarding` entry. In the above output, the URL to copy is `https://68cd84ed.ngrok.io`. Using that URL as the base, let's construct two URLs: one to the payment request webhook (ngrok URL + `/api/update`), and one to the payment complete webhook (ngrok URL + `/api/complete`). For example, using the URL from the example output above:
 
-```http
+```
 https://68cd84ed.ngrok.io/api/update
 https://68cd84ed.ngrok.io/api/complete
 ```
